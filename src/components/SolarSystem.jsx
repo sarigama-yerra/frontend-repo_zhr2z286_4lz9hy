@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Sun, Orbit, Moon, Info } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { planets } from '../solarData'
 
 export default function SolarSystem({ onSelectPlanet }) {
   const [showOrbits, setShowOrbits] = useState(true)
   const [dark, setDark] = useState(true)
   const [t, setT] = useState(0)
+  const [hovered, setHovered] = useState(null)
+  const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const rafRef = useRef(null)
+  const wrapRef = useRef(null)
 
   useEffect(() => {
     let start = performance.now()
@@ -20,10 +22,33 @@ export default function SolarSystem({ onSelectPlanet }) {
     return () => cancelAnimationFrame(rafRef.current)
   }, [])
 
+  const onMouseMove = (e) => {
+    const rect = wrapRef.current?.getBoundingClientRect()
+    if (!rect) return
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    setMouse({ x, y })
+  }
+
   const themeClass = dark ? 'bg-[#0a0f1f] text-white' : 'bg-white text-gray-900'
 
+  // Calculate tilt for semi-3D effect
+  let tiltX = 0, tiltY = 0
+  const rect = wrapRef.current?.getBoundingClientRect()
+  if (rect) {
+    const cx = rect.width / 2
+    const cy = rect.height / 2
+    tiltY = ((mouse.x - cx) / cx) * 6 // rotateY
+    tiltX = -((mouse.y - cy) / cy) * 6 // rotateX
+  }
+
   return (
-    <div className={`w-full min-h-[600px] rounded-2xl border border-gray-200 overflow-hidden relative ${themeClass}`}>
+    <div
+      ref={wrapRef}
+      onMouseMove={onMouseMove}
+      className={`w-full min-h-[600px] rounded-2xl border border-gray-200 overflow-hidden relative ${themeClass}`}
+      style={{ perspective: 1000 }}
+    >
       <div className="absolute z-10 left-4 top-4 flex gap-2">
         <button onClick={() => setShowOrbits((v) => !v)} className="px-3 py-1.5 text-xs rounded-md bg-white/10 border border-white/20 backdrop-blur hover:bg-white/20">
           {showOrbits ? 'Sembunyikan Orbit' : 'Tampilkan Orbit'}
@@ -36,7 +61,10 @@ export default function SolarSystem({ onSelectPlanet }) {
         </button>
       </div>
 
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div
+        className="absolute inset-0 flex items-center justify-center will-change-transform"
+        style={{ transform: `translateZ(0) rotateX(${tiltX}deg) rotateY(${tiltY}deg)` }}
+      >
         <div className="relative">
           {/* Sun */}
           <button
@@ -45,7 +73,7 @@ export default function SolarSystem({ onSelectPlanet }) {
           />
 
           {/* Planets */}
-          {planets.map((p, idx) => {
+          {planets.map((p) => {
             const angle = t * p.speed
             const x = Math.cos(angle) * p.orbit
             const y = Math.sin(angle) * p.orbit
@@ -62,6 +90,8 @@ export default function SolarSystem({ onSelectPlanet }) {
                   />
                 )}
                 <button
+                  onMouseEnter={() => setHovered(p)}
+                  onMouseLeave={() => setHovered(null)}
                   onClick={() => onSelectPlanet?.(p)}
                   className="absolute rounded-full border shadow"
                   style={{
@@ -114,6 +144,21 @@ export default function SolarSystem({ onSelectPlanet }) {
           })}
         </div>
       </div>
+
+      {/* Hover Tooltip */}
+      {hovered && (
+        <div
+          className={`pointer-events-none absolute z-20 px-3 py-2 text-xs rounded-md border shadow ${dark ? 'bg-black/70 text-white border-white/20' : 'bg-white text-gray-900 border-gray-200'}`}
+          style={{ left: Math.min(mouse.x + 12, (wrapRef.current?.clientWidth || 0) - 160), top: mouse.y + 12, maxWidth: 220 }}
+        >
+          <div className="font-medium flex items-center gap-2">
+            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: hovered.color }} />
+            {hovered.name}
+          </div>
+          <div className="mt-1 opacity-80">Diameter: {hovered.facts?.diameter}</div>
+          <div className="opacity-80">Jarak: {hovered.facts?.jarak}</div>
+        </div>
+      )}
 
       <div className="absolute bottom-3 left-4 right-4 text-xs opacity-80">
         <div className="max-w-xl rounded-md border px-3 py-2 bg-black/20 backdrop-blur">
