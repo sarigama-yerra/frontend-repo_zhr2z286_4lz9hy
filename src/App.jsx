@@ -11,6 +11,7 @@ import {
   Menu,
   X,
 } from 'lucide-react'
+import SolarLanding from './components/SolarLanding'
 
 function Navbar() {
   const [open, setOpen] = useState(false)
@@ -28,6 +29,7 @@ function Navbar() {
           <a href="#pricing" className="hover:text-gray-900 transition-colors">Harga</a>
           <a href="#faq" className="hover:text-gray-900 transition-colors">FAQ</a>
           <a href="#contact" className="hover:text-gray-900 transition-colors">Kontak</a>
+          <a href="#solar" className="hover:text-gray-900 transition-colors">Tata Surya</a>
         </nav>
         <div className="hidden md:flex items-center gap-3">
           <a href="#pricing" className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900">Masuk</a>
@@ -44,6 +46,7 @@ function Navbar() {
             <a onClick={() => setOpen(false)} href="#pricing" className="py-2">Harga</a>
             <a onClick={() => setOpen(false)} href="#faq" className="py-2">FAQ</a>
             <a onClick={() => setOpen(false)} href="#contact" className="py-2">Kontak</a>
+            <a onClick={() => setOpen(false)} href="#solar" className="py-2">Tata Surya</a>
             <a onClick={() => setOpen(false)} href="#pricing" className="py-2 px-3 rounded-md text-white bg-gradient-to-r from-cyan-500 to-blue-600 w-max">Coba Gratis</a>
           </nav>
         </div>
@@ -331,6 +334,7 @@ export default function App() {
         <Hero />
         <Features />
         <Pricing />
+        <SolarLanding />
         <FAQ />
         <Contact />
       </main>
