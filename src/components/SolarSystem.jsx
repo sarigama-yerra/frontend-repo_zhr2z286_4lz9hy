@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { planets } from '../solarData'
 
-export default function SolarSystem({ onSelectPlanet }) {
+export default function SolarSystem({ onSelectPlanet, onSelectMoon }) {
   const [showOrbits, setShowOrbits] = useState(true)
   const [dark, setDark] = useState(true)
   const [t, setT] = useState(0)
@@ -126,16 +126,20 @@ export default function SolarSystem({ onSelectPlanet }) {
                           }}
                         />
                       )}
-                      <div
+                      <button
+                        onClick={() => onSelectMoon?.(p, m)}
                         className="absolute rounded-full"
                         style={{
                           transform: `translate(${mx - m.size / 2}px, ${my - m.size / 2}px)`,
                           width: m.size,
                           height: m.size,
-                          background: m.color
+                          background: m.color,
+                          boxShadow: '0 0 10px rgba(0,0,0,0.2)'
                         }}
-                        title={m.name}
-                      />
+                        title={`${m.name} (satelit ${p.name})`}
+                      >
+                        <span className="sr-only">{m.name}</span>
+                      </button>
                     </div>
                   )
                 })}
@@ -162,7 +166,7 @@ export default function SolarSystem({ onSelectPlanet }) {
 
       <div className="absolute bottom-3 left-4 right-4 text-xs opacity-80">
         <div className="max-w-xl rounded-md border px-3 py-2 bg-black/20 backdrop-blur">
-          Klik sebuah planet untuk melihat detailnya.
+          Klik sebuah planet untuk melihat detailnya. Klik satelit untuk pop-up cepat.
         </div>
       </div>
     </div>

@@ -10,10 +10,27 @@
     --font-mona: 'Mona Sans', system-ui, sans-serif;
     --font-ibm-plex: 'IBM Plex Sans', system-ui, sans-serif;
     --font-manrope: 'Manrope', system-ui, sans-serif;
+    --font-montserrat: 'Montserrat', var(--font-sans);
+    --font-raleway: 'Raleway', var(--font-sans);
+  }
+
+  @font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: local('Montserrat'), url('https://fonts.gstatic.com/s/montserrat/v26/JTURjIg1_i6t8kCHKm45_cJD3gTD_u50.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: local('Raleway'), url('https://fonts.gstatic.com/s/raleway/v28/1Ptug8zYS_SKggPNyC0ITw.woff2') format('woff2');
   }
 
   html {
-    font-family: var(--font-sans);
+    font-family: var(--font-montserrat);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -42,5 +59,13 @@
     --tw-exit-rotate: initial;
     --tw-exit-translate-x: initial;
     --tw-exit-translate-y: initial;
+  }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin-slow {
+    animation: spin-slow 18s linear infinite;
   }
 }
